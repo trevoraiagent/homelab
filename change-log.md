@@ -2,6 +2,24 @@
 
 Newest first. Each entry: what changed, why, how verified, rollback.
 
+## 2026-11-02 - Repository switch and first system update on pve01
+
+**Change:** Disabled the enterprise APT repositories, enabled the No-Subscription repository, and applied all pending updates. Rebooted to load the new kernel.
+
+**Why:** The enterprise repos (pve-enterprise, ceph-squid enterprise) require a paid subscription and returned a warning on a fresh install. No-Subscription is the standard repo for homelab use. Updating right after install picks up security fixes before any workloads exist.
+
+**Details:**
+- Disabled `pve-enterprise` and `ceph-squid` enterprise repos (Ceph is not in use).
+- Added the `pve-no-subscription` repository via Node > Updates > Repositories.
+- Ran Refresh: completed with TASK OK, packages fetched from pve-no-subscription.
+- Ran Upgrade: 116 Debian packages pending, including a security update to rsync (33 CVE fixes). Dismissed the apt-listchanges pager and kept existing config files.
+- Upgrade finished with "Your System is up-to-date" and a kernel update notice, followed by a reboot.
+- The "No valid subscription" popup at login is expected without a subscription and was left as is.
+
+**Verification:** After reboot, `uname -r && pveversion` returned kernel 7.0.14-26-pve and pve-manager 9.2.25 (previously kernel 7.0.2-6-pve, pve-manager 9.2.2). The web UI came back at https://192.168.0.145:8006, which also confirms the address holds after a reboot with the DHCP reservation in place.
+
+**Rollback:** Re-enable the enterprise repos and disable no-subscription in the Repositories panel. Package downgrades are not planned. Select the previous kernel from the boot menu if the new one misbehaves.
+
 ## 2026-11-02 - DHCP reservation for pve01
 
 **Change:** Created a DHCP address reservation on the router binding 192.168.0.145 to pve01's network interface (vmbr0 MAC).

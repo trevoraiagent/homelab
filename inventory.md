@@ -15,7 +15,7 @@ Last updated: 2026-11-02
 
 | Component | Version | Host |
 |---|---|---|
-| Proxmox VE | 9.2-1 (pve-manager 9.2.2, kernel 7.0.2-6-pve) | pve01 |
+| Proxmox VE | Installed from 9.2-1 ISO; now pve-manager 9.2.25, kernel 7.0.14-26-pve (updated 2026-11-02) | pve01 |
 | balenaEtcher | (used for install USB) | Admin workstation |
 
 ## Network
