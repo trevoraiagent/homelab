@@ -36,6 +36,6 @@ flowchart LR
 
 - [x] Reserve 192.168.0.145 in router DHCP
 - [x] Switch to no-subscription repos, run first update
-- [ ] Create a non-root admin user with 2FA
+- [x] Create a non-root admin user with 2FA
 - [ ] Backup job and storage layout
 - [ ] First VM/container, then document as a runbook

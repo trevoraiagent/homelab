@@ -29,4 +29,5 @@ Last updated: 2026-11-02
 
 | System | Account | Auth | Notes |
 |---|---|---|---|
-| Proxmox web UI | root@pam | Password | Admin user and 2FA planned. Credentials go in password manager, never in this repo. |
+| Proxmox web UI | trevor@pve | Password + TOTP | Administrator role. Daily-use account. |
+| Proxmox web UI | root@pam | Password | Break-glass fallback only. Credentials in password manager, never in this repo. |

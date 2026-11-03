@@ -2,6 +2,22 @@
 
 Newest first. Each entry: what changed, why, how verified, rollback.
 
+## 2026-11-02 - Non-root admin account with 2FA on pve01
+
+**Change:** Created a named administrator account `trevor@pve` (Proxmox VE authentication server realm), granted the Administrator role at path `/`, and enrolled TOTP two-factor authentication using an authenticator app.
+
+**Why:** Day-to-day administration should not use the root account. A named account gives an audit trail, and 2FA protects the web UI against stolen or guessed passwords. `root@pam` is kept as a break-glass fallback.
+
+**Details:**
+- Account created under Datacenter > Permissions > Users, username in lowercase because usernames are case-sensitive.
+- Role assigned under Datacenter > Permissions with path `/` and role Administrator.
+- TOTP enrolled under Datacenter > Permissions > Two Factor.
+- Credentials stored in a password manager (Bitwarden), organized in a Homelab folder. Nothing sensitive is stored in this repo.
+
+**Verification:** Logged out and back in as `trevor@pve` with password plus authenticator code. Login succeeded and the dashboard loaded.
+
+**Rollback:** Remove the TOTP entry or delete the user under Datacenter > Permissions. Log in as `root@pam` if the new account is locked out.
+
 ## 2026-11-02 - Repository switch and first system update on pve01
 
 **Change:** Disabled the enterprise APT repositories, enabled the No-Subscription repository, and applied all pending updates. Rebooted to load the new kernel.
