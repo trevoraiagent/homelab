@@ -20,5 +20,5 @@ Newest first. Each entry: what changed, why, how verified, rollback.
 **Rollback:** Reinstall from USB media (no data on host yet).
 
 **Follow-ups:**
-1. Confirm the full FQDN with `hostname -f` (the UI shows the node name pve01).
+1. ~~Confirm the full FQDN with `hostname -f`.~~ Done 2026-11-02: shell returned `pve01.homelab.lan`.
 2. Create DHCP reservation for 192.168.0.145 on the router.
