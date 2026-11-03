@@ -30,7 +30,7 @@ flowchart LR
 
 ## Roadmap
 
-- [ ] Reserve 192.168.0.145 in router DHCP
+- [x] Reserve 192.168.0.145 in router DHCP
 - [ ] Switch to no-subscription repos, run first update
 - [ ] Create a non-root admin user with 2FA
 - [ ] Backup job and storage layout

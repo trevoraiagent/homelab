@@ -2,6 +2,21 @@
 
 Newest first. Each entry: what changed, why, how verified, rollback.
 
+## 2026-11-02 - DHCP reservation for pve01
+
+**Change:** Created a DHCP address reservation on the router binding 192.168.0.145 to pve01's network interface (vmbr0 MAC).
+
+**Why:** pve01 uses a static IP configured on the host. The reservation stops the router from handing .145 to another device and causing an IP conflict.
+
+**Details:**
+- pve01 did not appear in the router's connected-devices list because it never requests a lease, so the MAC was entered manually.
+- MAC address read from the Proxmox shell with `ip -br link show vmbr0`.
+- Hostname also confirmed with `hostname -f`, which returned `pve01.homelab.lan`.
+
+**Verification:** Reservation saved in the router. Re-check after the next reboot that pve01 still answers at 192.168.0.145.
+
+**Rollback:** Delete the reservation entry in the router's DHCP settings. The host keeps working on its static IP.
+
 ## 2026-11-02 - Initial Proxmox VE install on pve01
 
 **Change:** Installed Proxmox VE 9.2-1 on a used Dell OptiPlex 5070 Micro.
@@ -21,4 +36,4 @@ Newest first. Each entry: what changed, why, how verified, rollback.
 
 **Follow-ups:**
 1. ~~Confirm the full FQDN with `hostname -f`.~~ Done 2026-11-02: shell returned `pve01.homelab.lan`.
-2. Create DHCP reservation for 192.168.0.145 on the router.
+2. ~~Create DHCP reservation for 192.168.0.145 on the router.~~ Done 2026-11-02 (see entry above).

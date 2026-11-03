@@ -23,7 +23,7 @@ Last updated: 2026-11-02
 | Host | FQDN | IP | Method | Role |
 |---|---|---|---|---|
 | Router | - | 192.168.0.1 | Static | Gateway, DNS |
-| pve01 | pve01.homelab.lan | 192.168.0.145/24 | Static on host; DHCP reservation pending | Proxmox node, web UI :8006 |
+| pve01 | pve01.homelab.lan | 192.168.0.145/24 | Static on host; DHCP reservation set on router | Proxmox node, web UI :8006 |
 
 ## Accounts and Access
 
