@@ -2,6 +2,28 @@
 
 Newest first. Each entry: what changed, why, how verified, rollback.
 
+## 2026-11-02 - First container: pihole01 (LXC) on pve01
+
+**Change:** Created an unprivileged LXC container, CT 100 `pihole01`, as the host for a future Pi-hole DNS filter. Pi-hole itself is not installed yet.
+
+**Why:** First real workload on the host. A container is much lighter than a full VM for a single network service. No other device uses it yet, so it can be tested without affecting the rest of the network.
+
+**Details:**
+- Downloaded the Debian 13 standard container template (debian-13-standard_13.6-1) to local storage.
+- Created CT 100: hostname `pihole01`, unprivileged, 1 core, 512 MiB RAM, 512 MiB swap, 8 GiB root disk on local-lvm.
+- Network: bridge vmbr0, static 192.168.0.146/24, gateway 192.168.0.1, DNS left at the host default.
+- Set to start after creation. Root password stored in the password manager.
+- Caught a blank IPv4 address field while reviewing the Confirm page and corrected it before creating the container.
+
+**Verification:** Task log shows CT 100 Create and CT 100 Start both OK. The container Summary shows status running, IP 192.168.0.146, 0% CPU, and about 19 MiB of 512 MiB RAM in use.
+
+**Rollback:** Stop and remove CT 100 (More > Remove). Nothing depends on it yet.
+
+**Follow-ups:**
+1. Create a DHCP reservation for 192.168.0.146 using the container's MAC (container > Network).
+2. Install Pi-hole and test it from a single device before changing any router DNS settings.
+3. Take a snapshot after setup, then add the container to a backup job.
+
 ## 2026-11-02 - Non-root admin account with 2FA on pve01
 
 **Change:** Created a named administrator account `trevor@pve` (Proxmox VE authentication server realm), granted the Administrator role at path `/`, and enrolled TOTP two-factor authentication using an authenticator app.
@@ -28,11 +50,11 @@ Newest first. Each entry: what changed, why, how verified, rollback.
 - Disabled `pve-enterprise` and `ceph-squid` enterprise repos (Ceph is not in use).
 - Added the `pve-no-subscription` repository via Node > Updates > Repositories.
 - Ran Refresh: completed with TASK OK, packages fetched from pve-no-subscription.
-- Ran Upgrade: 116 Debian packages pending, including a security update to rsync (33 CVE fixes). Dismissed the apt-listchanges pager and kept existing config files.
+- Ran Upgrade: 116 Debian-origin packages pending (plus Proxmox packages, including the kernel), including a security update to rsync (33 CVE fixes). Dismissed the apt-listchanges pager and kept existing config files.
 - Upgrade finished with "Your System is up-to-date" and a kernel update notice, followed by a reboot.
-- The "No valid subscription" popup at login is expected without a subscription and was left as is.
+- The "No valid subscription" popup at login is expected without a subscription and was left as is. The Summary page also shows "Non production-ready repository enabled", which is expected while using the no-subscription repository.
 
-**Verification:** After reboot, `uname -r && pveversion` returned kernel 7.0.14-26-pve and pve-manager 9.2.25 (previously kernel 7.0.2-6-pve, pve-manager 9.2.2). The web UI came back at https://192.168.0.145:8006, which also confirms the address holds after a reboot with the DHCP reservation in place.
+**Verification:** After reboot, `uname -r && pveversion` returned kernel 7.0.14-26-pve and pve-manager 9.2.25 (previously kernel 7.0.2-6-pve, pve-manager 9.2.2). The web UI came back at https://192.168.0.145:8006, which confirms the static address survives a reboot. The DHCP reservation itself has not been independently tested.
 
 **Rollback:** Re-enable the enterprise repos and disable no-subscription in the Repositories panel. Package downgrades are not planned. Select the previous kernel from the boot menu if the new one misbehaves.
 
