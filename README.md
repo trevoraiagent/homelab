@@ -4,7 +4,7 @@ Personal homelab built to practice IT support, systems administration, security,
 
 ## Summary
 
-I built this lab on a used Dell OptiPlex 5070 Micro running Proxmox VE. Day one: installed Proxmox, set a static IP and hostname, reserved the address on the router, switched from the paid enterprise repos to the no-subscription repo, and applied all updates including a kernel and security fixes, set up a non-root admin account with 2FA, and launched my first container. Every change is recorded in the change log with verification and rollback steps, and the install is written up as a runbook. Next up: installing Pi-hole in the container, then backups.
+I built this lab on a used Dell OptiPlex 5070 Micro running Proxmox VE. Day one: installed Proxmox, set a static IP and hostname, reserved the address on the router, switched from the paid enterprise repos to the no-subscription repo, and applied all updates including a kernel and security fixes, set up a non-root admin account with 2FA, and launched my first container running Pi-hole, a DNS ad blocker I tested by querying it directly. Every change is recorded in the change log with verification and rollback steps, and the install is written up as a runbook. Next up: testing a restore from backup and trying Pi-hole on a single device.
 
 ## Environment
 
@@ -38,7 +38,9 @@ flowchart LR
 - [x] Reserve 192.168.0.145 in router DHCP
 - [x] Switch to no-subscription repos, run first update
 - [x] Create a non-root admin user with 2FA
-- [ ] Backup job and storage layout
+- [x] Backup job for pihole01 (local storage; off-host copy still to do)
+- [ ] Test a restore from backup
 - [x] First container (pihole01, CT 100)
-- [ ] Install Pi-hole and test on one device
+- [x] Install Pi-hole and verify blocking with test queries
+- [ ] Point one test device at Pi-hole
 - [ ] Document container creation as a runbook

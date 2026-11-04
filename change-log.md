@@ -2,6 +2,64 @@
 
 Newest first. Each entry: what changed, why, how verified, rollback.
 
+## 2026-11-02 - Scheduled backup job for pihole01
+
+**Change:** Created a Proxmox backup job for CT 100 (pihole01) on the `local` storage, scheduled daily at 02:00, snapshot mode, ZSTD compression, keeping the last 3 backups. Ran it once manually to test.
+
+**Why:** Snapshots protect against configuration mistakes but live with the container. A backup is a separate file that can restore the container after deletion or corruption, and a daily schedule means recovery never loses more than a day of changes.
+
+**Details:**
+- Created under Datacenter > Backup > Add. Selection: CT 100 only.
+- Retention keep-last 3 limits disk use on the single 256 GB drive.
+- Limitation: the backup target is the same physical disk as the host. This does not protect against drive failure. An off-host copy (USB drive or another machine) is still needed.
+
+**Verification:** Used "Run now"; the task list showed the backup task with status OK.
+
+**Rollback:** Delete the job under Datacenter > Backup. Existing backup files can be removed under local > Backups.
+
+**Follow-ups:**
+1. Confirm the backup file appears under local (pve01) > Backups and record its size.
+2. Practice a restore into a new container ID to prove the backup works. An untested backup is not a backup.
+3. Add an off-host backup target when hardware allows.
+
+## 2026-11-02 - Snapshot of pihole01 after clean Pi-hole install
+
+**Change:** Took a Proxmox snapshot of CT 100 named `clean-pihole-install`, without RAM state.
+
+**Why:** A known-good restore point before testing Pi-hole with real devices. If a setting or update breaks the container, it can be rolled back in a few clicks instead of rebuilt.
+
+**Details:**
+- Taken from CT 100 > Snapshots > Take Snapshot. State at the time: Pi-hole v6.5 / Web v6.6.1 / FTL v6.8 installed, dashboard reachable, no clients using it.
+- A snapshot lives on the same disk as the container, so it protects against configuration mistakes, not against disk failure. A separate backup job is the next task.
+
+**Verification:** Task completed with TASK OK.
+
+**Rollback:** Delete the snapshot from the same Snapshots panel. To use it, select it and choose Rollback (this discards changes made after the snapshot).
+
+## 2026-11-02 - Pi-hole installed and tested on pihole01
+
+**Change:** Installed Pi-hole, a DNS-level ad and tracker blocker, inside CT 100 using the official installer. No client device and no router DNS setting was changed, so nothing else on the network uses it yet.
+
+**Why:** Hands-on practice with DNS administration, and a safe first service to run on the lab. Keeping it unused until tested means a mistake cannot affect other devices.
+
+**Details:**
+- Confirmed the container had internet and name resolution first (`ping deb.debian.org` returned replies), after installing `curl`.
+- Ran the Pi-hole installer; it finished with "Installation Complete". Used the default blocklist and the "Show everything" query-logging privacy mode.
+- Installed versions (all current at install time): Core v6.5, Web v6.6.1, FTL v6.8.
+- Entering the container with `pct enter` gives a shell without `/usr/local/bin` on its PATH, so `pihole` returned "command not found" until it was run by full path (`/usr/local/bin/pihole`).
+- Could not log in to the container console with the root password set at creation (typed blind, so a typo was likely). Entered the container from the host with `pct enter 100` and reset the password with `passwd`.
+
+**Verification:** From the admin PC, queried Pi-hole directly without changing any settings. `nslookup example.com 192.168.0.146` returned real addresses. `nslookup doubleclick.net 192.168.0.146` returned `0.0.0.0`, showing the ad domain is blocked. The server identified itself as `pi.hole` at 192.168.0.146.
+
+**Rollback:** No device depends on it. Remove with `pihole uninstall` inside the container, or stop and remove CT 100.
+
+**Follow-ups:**
+1. ~~Set the dashboard password and confirm the dashboard.~~ Done 2026-11-02: admin password set and the dashboard loads at http://192.168.0.146/admin.
+2. Confirm the upstream DNS provider and blocklist settings in the dashboard. (Version recorded above.)
+3. Point one test device at 192.168.0.146 manually and watch the query log.
+4. Snapshot the container, then add it to a backup job.
+5. Decide whether to use Pi-hole for the whole network. If the router uses it, a secondary DNS fallback matters, because everyone's internet depends on this container being up.
+
 ## 2026-11-02 - First container: pihole01 (LXC) on pve01
 
 **Change:** Created an unprivileged LXC container, CT 100 `pihole01`, as the host for a future Pi-hole DNS filter. Pi-hole itself is not installed yet.
@@ -17,10 +75,10 @@ Newest first. Each entry: what changed, why, how verified, rollback.
 
 **Verification:** Task log shows CT 100 Create and CT 100 Start both OK. The container Summary shows status running, IP 192.168.0.146, 0% CPU, and about 19 MiB of 512 MiB RAM in use.
 
-**Rollback:** Stop and remove CT 100 (More > Remove). Nothing depends on it yet.
+**Rollback:** Stop and remove CT 100 (More > Remove). Nothing depends on it yet. The router reservation for 192.168.0.146 would also be deleted.
 
 **Follow-ups:**
-1. Create a DHCP reservation for 192.168.0.146 using the container's MAC (container > Network).
+1. ~~Create a DHCP reservation for 192.168.0.146 using the container's MAC (container > Network).~~ Done 2026-11-02: reservation saved on the router.
 2. Install Pi-hole and test it from a single device before changing any router DNS settings.
 3. Take a snapshot after setup, then add the container to a backup job.
 

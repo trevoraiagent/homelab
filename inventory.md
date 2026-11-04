@@ -16,13 +16,14 @@ Last updated: 2026-11-02
 | Component | Version | Host |
 |---|---|---|
 | Proxmox VE | Installed from 9.2-1 ISO; now pve-manager 9.2.25, kernel 7.0.14-26-pve (updated 2026-11-02) | pve01 |
+| Pi-hole | Core v6.5, Web v6.6.1, FTL v6.8 (installed 2026-11-02) | pihole01 (CT 100) |
 | balenaEtcher | (used for install USB) | Admin workstation |
 
 ## Virtual Machines and Containers
 
 | ID | Name | Type | Resources | Address | Purpose | Status |
 |---|---|---|---|---|---|---|
-| 100 | pihole01 | LXC (unprivileged), Debian 13 | 1 core, 512 MiB RAM, 8 GiB disk | 192.168.0.146/24 (static) | Future Pi-hole DNS filter | Running, Pi-hole not installed yet |
+| 100 | pihole01 | LXC (unprivileged), Debian 13 | 1 core, 512 MiB RAM, 8 GiB disk | 192.168.0.146/24 (static) | Pi-hole DNS filter | Running, Pi-hole installed; no clients using it yet |
 
 ## Network
 
@@ -30,7 +31,7 @@ Last updated: 2026-11-02
 |---|---|---|---|---|
 | Router | - | 192.168.0.1 | Static | Gateway, DNS |
 | pve01 | pve01.homelab.lan | 192.168.0.145/24 | Static on host; DHCP reservation set on router | Proxmox node, web UI :8006 |
-| pihole01 | - | 192.168.0.146/24 | Static on container; DHCP reservation pending | CT 100, future DNS filter |
+| pihole01 | - | 192.168.0.146/24 | Static on container; DHCP reservation set on router | CT 100, future DNS filter |
 
 ## Accounts and Access
 
